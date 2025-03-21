@@ -1,0 +1,428 @@
+<div class="background-app">
+  <div class="d-flex flex-column full-height">
+    <div class="container-fluid h-100">
+      <div class="row h-100">
+        <div
+          class="col-md-6 p-0 image-container full-height blur-in"
+          [class.image-left]="!isLoginMode"
+          [class.image-right]="isLoginMode"
+        >
+          <img
+            src="f1.png"
+            alt="Image"
+            class="img-fluid h-100 w-100 slide-image"
+            style="object-fit: cover"
+          />
+        </div>
+        <div
+          class="col-md-6 p-0 form-container full-height"
+          [class.form-left]="isLoginMode"
+          [class.form-right]="!isLoginMode"
+        >
+          <div
+            class="d-flex justify-content-center align-items-center flex-grow-1"
+          >
+            <div
+              class="w-75 text-color form-animate"
+              [ngClass]="{ 'fade-in': isFadingIn, 'fade-out': isFadingOut }"
+            >
+              <div
+                class="text-center mb-5 d-flex justify-content-center align-items-center"
+              >
+                <div class="col-1 text-left house-icon-container">
+                  <i
+                    class="fas fa-arrow-left house-icon arrow-icon"
+                    [ngClass]="{ disabled: isLoading }"
+                    (click)="!isLoading && redirectTo('')"
+                  >
+                  </i>
+
+                  <i
+                    class="fas fa-home house-icon home-icon"
+                    [ngClass]="{ 'disabled-icon': isLoading }"
+                    (click)="!isLoading && redirectTo('')"
+                  >
+                  </i>
+
+                  <span class="tooltip-text-upper">Retour au chat</span>
+                </div>
+                <div class="col-11">
+                  <h1 *ngIf="isLoginMode">Connexion</h1>
+                  <h1 *ngIf="!isLoginMode">Inscription</h1>
+                </div>
+              </div>
+              <form
+                *ngIf="isLoginMode"
+                [formGroup]="loginForm"
+                (ngSubmit)="onLoginSubmit()"
+              >
+                <div class="form-group position-relative">
+                  <div class="input-group" [ngClass]="{ disabled: isLoading }">
+                    <input
+                      type="email"
+                      id="email"
+                      placeholder="Adresse mail"
+                      formControlName="email"
+                      class="form-control"
+                      autocomplete="off"
+                    />
+                    <span class="input-group-text bg-transparent border-0">
+                      <i class="fas fa-envelope text-white"></i>
+                    </span>
+                  </div>
+                  <div *ngIf="loginForm.get('email')?.touched">
+                    <div
+                      *ngIf="!loginForm.get('email')?.value"
+                      class="text-danger"
+                    >
+                      <small class="blur-in">L'email est requis.</small>
+                    </div>
+                    <div
+                      *ngIf="
+                        loginForm.get('email')?.value &&
+                        loginForm.get('email')?.invalid
+                      "
+                      class="text-danger"
+                    >
+                      <small class="blur-in"
+                        >Le format de l'email est invalide.</small
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="form-group position-relative mt-4"
+                  [ngClass]="{ disabled: isLoading }"
+                >
+                  <div class="input-group">
+                    <input
+                      [type]="isPasswordVisible ? 'text' : 'password'"
+                      id="password"
+                      placeholder="Mot de passe"
+                      formControlName="password"
+                      class="form-control"
+                      autocomplete="off"
+                    />
+                    <span
+                      class="input-group-text bg-transparent border-0"
+                      (click)="togglePasswordVisibility()"
+                    >
+                      <i
+                        [class.fas]="true"
+                        [class.fa-eye]="!isPasswordVisible"
+                        [class.fa-eye-slash]="isPasswordVisible"
+                        class="text-white"
+                      ></i>
+                    </span>
+                  </div>
+                  <div *ngIf="loginForm.get('password')?.touched">
+                    <div
+                      *ngIf="!loginForm.get('password')?.value"
+                      class="text-danger"
+                    >
+                      <small class="blur-in">Le mot de passe est requis.</small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-center mt-5">
+                  <button
+                    type="submit"
+                    class="button-custom"
+                    [ngClass]="{ disabled: isLoading }"
+                  >
+                    <span *ngIf="!isLoading">Se connecter</span>
+                    <span *ngIf="isLoading">
+                      <div
+                        class="spinner-border spinner-border-sm text-dark"
+                        role="status"
+                      ></div>
+                    </span>
+                  </button>
+                </div>
+                <div *ngIf="errorMessage" class="text-danger errorMessages">
+                  <small class="blur-in">{{ errorMessage }}</small>
+                </div>
+              </form>
+              <form
+                *ngIf="!isLoginMode"
+                [formGroup]="inscriptionForm"
+                (ngSubmit)="onInscriptionSubmit()"
+              >
+                <div
+                  class="form-group position-relative mb-3"
+                  [ngClass]="{ disabled: isLoading }"
+                >
+                  <div class="input-group">
+                    <input
+                      id="username"
+                      type="text"
+                      placeholder="username"
+                      formControlName="username"
+                      class="form-control"
+                    />
+                    <span class="input-group-text bg-transparent border-0">
+                      <i class="fas fa-user text-white"></i>
+                    </span>
+                  </div>
+                  <div *ngIf="inscriptionForm.get('username')?.touched">
+                    <div
+                      *ngIf="
+                        inscriptionForm.get('username')?.hasError('required')
+                      "
+                      class="text-danger"
+                    >
+                      <small class="blur-in"
+                        >Le nom d'utilisateur est requis.</small
+                      >
+                    </div>
+                    <div
+                      *ngIf="
+                        inscriptionForm.get('username')?.hasError('minlength')
+                      "
+                      class="text-danger"
+                    >
+                      <small class="blur-in"
+                        >Le nom d'utilisateur doit contenir au moins 2
+                        caractères.</small
+                      >
+                    </div>
+                    <div
+                      *ngIf="
+                        inscriptionForm.get('username')?.hasError('maxlength')
+                      "
+                      class="text-danger"
+                    >
+                      <small class="blur-in"
+                        >Le nom d'utilisateur ne doit pas contenir plus de 20
+                        caractères.</small
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="form-group position-relative mb-3"
+                  [ngClass]="{ disabled: isLoading }"
+                >
+                  <div class="input-group">
+                    <input
+                      type="email"
+                      id="email"
+                      placeholder="Adresse mail"
+                      formControlName="email"
+                      class="form-control"
+                    />
+                    <span class="input-group-text bg-transparent border-0">
+                      <i class="fas fa-envelope text-white"></i>
+                    </span>
+                  </div>
+                  <div *ngIf="inscriptionForm.get('email')?.touched">
+                    <div
+                      *ngIf="inscriptionForm.get('email')?.hasError('required')"
+                      class="text-danger"
+                    >
+                      <small class="blur-in"
+                        >L'adresse email est requise.</small
+                      >
+                    </div>
+                    <div
+                      *ngIf="inscriptionForm.get('email')?.hasError('email')"
+                      class="text-danger"
+                    >
+                      <small class="blur-in"
+                        >Veuillez entrer une adresse email valide.</small
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="form-group position-relative mb-3"
+                  [ngClass]="{ disabled: isLoading }"
+                >
+                  <div class="input-group">
+                    <input
+                      [type]="isPasswordVisible ? 'text' : 'password'"
+                      id="password"
+                      placeholder="Mot de passe"
+                      formControlName="password"
+                      class="form-control"
+                      (focus)="showTooltip = true"
+                      (blur)="showTooltip = false"
+                    />
+                    <span
+                      class="input-group-text bg-transparent border-0"
+                      (click)="togglePasswordVisibility()"
+                    >
+                      <i
+                        [class.fas]="true"
+                        [class.fa-eye]="!isPasswordVisible"
+                        [class.fa-eye-slash]="isPasswordVisible"
+                        class="text-white"
+                      ></i>
+                    </span>
+                  </div>
+                  <div *ngIf="inscriptionForm.get('password')?.touched">
+                    <div
+                      *ngIf="
+                        inscriptionForm.get('password')?.hasError('required')
+                      "
+                      class="text-danger"
+                    >
+                      <small class="blur-in">Le mot de passe est requis.</small>
+                    </div>
+                  </div>
+                  <div
+                    *ngIf="showTooltip"
+                    class="password-tooltip fade-upTooltipPassword"
+                  >
+                    <ul class="password-requirements">
+                      <li
+                        [ngClass]="{
+                          'text-success': passwordRequirements.hasLength,
+                          'text-danger': !passwordRequirements.hasLength,
+                        }"
+                      >
+                        <span class="icon">
+                          <img
+                            *ngIf="passwordRequirements.hasLength"
+                            src="valider.png"
+                            alt="Validé"
+                            class="status-icon"
+                          />
+                          <img
+                            *ngIf="!passwordRequirements.hasLength"
+                            src="croix.png"
+                            alt="Non validé"
+                            class="status-icon"
+                          />
+                        </span>
+                        Minimum 8 caractères
+                      </li>
+                      <li
+                        [ngClass]="{
+                          'text-success': passwordRequirements.hasUppercase,
+                          'text-danger': !passwordRequirements.hasUppercase,
+                        }"
+                      >
+                        <span class="icon">
+                          <img
+                            *ngIf="passwordRequirements.hasUppercase"
+                            src="valider.png"
+                            alt="Validé"
+                            class="status-icon"
+                          />
+                          <img
+                            *ngIf="!passwordRequirements.hasUppercase"
+                            src="croix.png"
+                            alt="Non validé"
+                            class="status-icon"
+                          />
+                        </span>
+                        Une majuscule
+                      </li>
+                      <li
+                        [ngClass]="{
+                          'text-success': passwordRequirements.hasSpecialChar,
+                          'text-danger': !passwordRequirements.hasSpecialChar,
+                        }"
+                      >
+                        <span class="icon">
+                          <img
+                            *ngIf="passwordRequirements.hasSpecialChar"
+                            src="valider.png"
+                            alt="Validé"
+                            class="status-icon"
+                          />
+                          <img
+                            *ngIf="!passwordRequirements.hasSpecialChar"
+                            src="croix.png"
+                            alt="Non validé"
+                            class="status-icon"
+                          />
+                        </span>
+                        Un caractère spécial
+                      </li>
+                      <li
+                        [ngClass]="{
+                          'text-success': passwordRequirements.hasNumber,
+                          'text-danger': !passwordRequirements.hasNumber,
+                        }"
+                      >
+                        <span class="icon">
+                          <img
+                            *ngIf="passwordRequirements.hasNumber"
+                            src="valider.png"
+                            alt="Validé"
+                            class="status-icon"
+                          />
+                          <img
+                            *ngIf="!passwordRequirements.hasNumber"
+                            src="croix.png"
+                            alt="Non validé"
+                            class="status-icon"
+                          />
+                        </span>
+                        Un chiffre
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-center mt-5">
+                  <button
+                    type="submit"
+                    class="button-custom"
+                    [ngClass]="{ disabled: isLoading }"
+                  >
+                    <span *ngIf="!isLoading">S'inscrire</span>
+                    <span *ngIf="isLoading">
+                      <div
+                        class="spinner-border spinner-border-sm text-dark"
+                        role="status"
+                      ></div>
+                    </span>
+                  </button>
+                </div>
+                <div *ngIf="errorMessage" class="text-danger errorMessages">
+                  <small class="blur-in">{{ errorMessage }}</small>
+                </div>
+              </form>
+            </div>
+
+            <div
+              class="footer-links text-center"
+              [ngClass]="{ 'fade-in': isFadingIn, 'fade-out': isFadingOut }"
+            >
+              <button
+                (click)="toggleMode()"
+                class="link-custom"
+                [ngClass]="{ disabled: isLoading }"
+              >
+                {{
+                  isLoginMode ? "Vous n’avez pas de compte ?" : "Se connecter"
+                }}
+              </button>
+              @if (isLoginMode) {
+                <span
+                  class="link-custom"
+                  style="pointer-events: none; user-select: none"
+                >
+                  |
+                </span>
+                <button
+                  (click)="redirectTo('passwordforgot')"
+                  class="link-custom"
+                  [ngClass]="{ disabled: isLoading }"
+                >
+                  Mot de passe oublié ?
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

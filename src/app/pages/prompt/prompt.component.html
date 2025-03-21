@@ -1,0 +1,20 @@
+<div class="d-flex flex-column min-vh-100 background-app">
+  @if (isAuth()) {
+    <app-slide-bar-shared
+      [isCollapsed]="isSlideBarCollapsed()"
+      (setIsCollapsed)="changeIsSlideBarCollapsed($event)"
+      (conversationSelected)="setConversationSelected($event)"
+      (setNewConversation)="setNewconversation($event)"
+      [needNewConversation]="setNewConversationSignal()"
+    />
+  }
+
+  <app-prompt-content-shared
+    [isCollapsed]="isSlideBarCollapsed()"
+    [screenWidth]="screenWidth()"
+    [conversationSelected]="conversation_idSelected()"
+    [needNewConversation]="setNewConversationSignal()"
+    (setIsCollapsed)="changeIsSlideBarCollapsed($event)"
+    (setNeedNewConversation)="setNewconversation($event)"
+  />
+</div>

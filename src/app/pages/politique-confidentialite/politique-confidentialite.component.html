@@ -1,0 +1,249 @@
+<body class="background-home">
+  <div class="navbar-container" [class.visible]="navbarVisible">
+    <div
+      class="custom-navbar"
+      [ngStyle]="{ width: togglehamburgerIcon ? '70%' : '50%' }"
+    >
+      <div class="navbar-item left-item">
+        <a
+          routerLink=""
+          style="text-decoration: none; color: #333"
+          [ngStyle]="{
+            'pointer-events': togglehamburgerIcon ? 'none' : 'auto',
+          }"
+        >
+          @if (togglehamburgerIcon) {
+            <img style="width: 35px; height: 35px" src="logo(1).png" />
+          } @else {
+            <span>DeepIA</span>
+          }
+        </a>
+      </div>
+      <div class="navbar-item center-item">
+        <div
+          class="hamburger-icon"
+          [class.open]="togglehamburgerIcon"
+          (click)="showOrHideOverlay()"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      <div class="navbar-item right-item">
+        <i class="bi bi-stars icon" (click)="navigateTo('prompt')"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-5 blur-in">
+    <div class="about-header text-center">
+      <p class="about-date">06 mars, 2025</p>
+      <h1 class="about-title hero-title">Politique de Confidentialité</h1>
+    </div>
+
+    <div class="about-content">
+      <h2>Introduction</h2>
+      <p>
+        Chez DeepIA, la protection de votre vie privée est une priorité absolue.
+        Cette politique de confidentialité vise à vous fournir une explication
+        complète sur la manière dont nous collectons, utilisons et protégeons
+        vos données personnelles lorsque vous utilisez notre service de
+        prédiction d'âge et de genre basé sur des photos.<br
+          style="margin-bottom: 20px"
+        />En utilisant notre service, vous acceptez les termes de cette
+        politique et consentez à la collecte et à l'utilisation de vos données
+        selon les conditions qui y sont décrites.
+      </p>
+
+      <h2>Données collectées</h2>
+      <p>
+        Lorsque vous interagissez avec notre service en téléchargeant une photo,
+        certaines données personnelles sont collectées et traitées. Nous
+        collectons principalement des photos que vous soumettez dans le cadre de
+        l'utilisation de notre outil de prédiction.<br
+          style="margin-bottom: 20px"
+        />Ces images sont nécessaires pour que notre algorithme puisse générer
+        une estimation de votre âge et de votre genre. En outre, nous pouvons
+        collecter des informations liées à votre appareil, telles que le type de
+        navigateur ou les données de connexion, afin d'améliorer votre
+        expérience d'utilisation.
+      </p>
+
+      <h2>Utilisation des données</h2>
+      <p>
+        Vos photos et les informations collectées sont utilisées exclusivement
+        dans le cadre du service que nous proposons. Plus précisément, elles
+        servent à alimenter notre algorithme pour la prédiction de votre âge et
+        de votre genre.<br style="margin-bottom: 20px" />Nous conservons
+        également un historique de vos prédictions pour que vous puissiez
+        consulter vos résultats passés à tout moment. Nous nous engageons à ne
+        pas utiliser vos photos ou vos informations à d'autres fins, et nous ne
+        partageons en aucun cas vos données avec des tiers.
+      </p>
+
+      <h2>Sécurisation de vos données</h2>
+      <p>
+        La sécurité de vos données est essentielle pour nous. Nous avons mis en
+        place des mesures techniques et organisationnelles appropriées pour
+        protéger vos photos et informations personnelles contre tout accès non
+        autorisé, toute perte ou toute altération.<br
+          style="margin-bottom: 20px"
+        />Toutefois, bien que nous prenions des mesures rigoureuses, nous vous
+        recommandons de ne pas télécharger de photos contenant des informations
+        sensibles, car aucun système de sécurité n'est infaillible.
+      </p>
+
+      <h2>Vos droits</h2>
+      <p>
+        En tant qu'utilisateur, vous avez des droits concernant vos données
+        personnelles. Vous pouvez à tout moment :
+      </p>
+      <p>
+        - Accéder à vos données collectées, y compris les photos que vous avez
+        téléchargées et les prédictions générées.<br
+          style="margin-bottom: 20px"
+        />
+        - Supprimer les photos de votre historique personnel en vous connectant
+        à votre compte.<br style="margin-bottom: 20px" />
+        - Demander la suppression complète de vos données de nos serveurs, si
+        vous souhaitez ne plus utiliser notre service.<br
+          style="margin-bottom: 20px"
+        />
+        Nous nous engageons à répondre à toute demande dans les meilleurs délais
+        et à respecter vos droits en matière de confidentialité.
+      </p>
+
+      <h2>Comment nous protégeons votre confidentialité</h2>
+      <p>
+        Pour garantir la sécurité de vos données, nous avons mis en place des
+        protocoles de sécurité avancés. Cela inclut le chiffrement des données
+        sensibles et des pratiques de gestion strictes des accès aux serveurs où
+        vos informations sont stockées.<br style="margin-bottom: 20px" />De
+        plus, seuls les employés autorisés et formés à la gestion des données
+        personnelles peuvent accéder aux informations collectées.
+      </p>
+      <p>
+        Nous surveillons régulièrement nos systèmes pour détecter toute
+        vulnérabilité potentielle et prenons des mesures immédiates pour
+        atténuer tout risque.<br style="margin-bottom: 20px" />Cependant, il est
+        important de rappeler qu'aucune méthode de transmission sur Internet ni
+        aucune méthode de stockage électronique n'est complètement sécurisée. En
+        cas de brèche, nous nous engageons à vous informer dans les meilleurs
+        délais.
+      </p>
+
+      <h2>Partage de vos données</h2>
+      <p>
+        Nous comprenons l'importance de la confidentialité de vos données. C'est
+        pourquoi nous ne partageons jamais vos photos ou informations
+        personnelles avec des tiers, à moins que cela ne soit strictement
+        nécessaire pour la prestation de notre service, comme dans le cas de
+        prestataires de services externes traitant des données pour notre
+        compte, ou si la loi nous y oblige.<br
+          style="margin-bottom: 20px"
+        />Tous les prestataires externes avec lesquels nous travaillons sont
+        soumis à des accords stricts garantissant la confidentialité et la
+        sécurité de vos informations.
+      </p>
+
+      <h2>Mise à jour de la politique de confidentialité</h2>
+      <p>
+        Cette politique de confidentialité peut être modifiée ou mise à jour de
+        temps à autre pour refléter des changements dans nos pratiques de
+        traitement des données ou pour répondre à des exigences légales.<br
+          style="margin-bottom: 20px"
+        />Nous vous encourageons à consulter régulièrement cette page afin de
+        vous assurer que vous êtes informé des dernières informations concernant
+        la gestion de vos données personnelles.
+      </p>
+
+      <h2>Contactez-nous</h2>
+      <p>
+        Si vous avez des questions concernant cette politique de confidentialité
+        ou si vous souhaitez exercer vos droits relatifs à vos données
+        personnelles, n'hésitez pas à nous contacter par email à l'adresse
+        suivante : contact-deepredict&#64;deepredict.com. Nous nous engageons à
+        traiter toutes vos demandes avec la plus grande attention et à répondre
+        dans les plus brefs délais.
+      </p>
+
+      <p>
+        En utilisant notre service, vous acceptez expressément les termes de
+        cette politique de confidentialité.<br
+          style="margin-bottom: 20px"
+        />Nous vous remercions de la confiance que vous nous accordez et nous
+        nous engageons à protéger vos données avec le plus grand soin.
+      </p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-categories">
+        <div class="footer-category">
+          <h3>DeepIA</h3>
+          <ul>
+            <li><a href="apropos">À propos</a></li>
+          </ul>
+        </div>
+        <div class="footer-category">
+          <h3>Fonctionnalité</h3>
+          <ul>
+            <li><a (click)="navigateTo('prompt')">Chat</a></li>
+            <li><a (click)="navigateTo('auth')">Connexion</a></li>
+          </ul>
+        </div>
+        <div class="footer-category">
+          <h3>Les réalisateurs</h3>
+          <ul>
+            <li><a href="#">Nassim</a></li>
+            <li><a href="#">Scander</a></li>
+            <li><a href="#">Soheib</a></li>
+            <li><a href="#">Samy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 DeepIA. Tous droits réservés.</p>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#"><i class="fab fa-github"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="overlay" [class.active]="overlayVisible">
+    <div class="overlay-content">
+      <div class="overlay-item">
+        <p>DeepIA</p>
+        <ul>
+          <li><a (click)="navigateTo('apropos')">À propos</a></li>
+        </ul>
+      </div>
+      <div class="overlay-item" style="margin-right: 12px">
+        <p>Lancez-vous</p>
+        <ul>
+          <li>
+            <a (click)="navigateTo('prompt')"
+              >Chat
+              <i
+                class="fa-solid fa-arrow-right fa-rotate-by"
+                style="--fa-rotate-angle: -45deg"
+              ></i
+            ></a>
+          </li>
+        </ul>
+      </div>
+      <div class="overlay-item">
+        <p>Vous</p>
+        <ul>
+          <li><a (click)="navigateTo('auth')">Connectez-vous</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>

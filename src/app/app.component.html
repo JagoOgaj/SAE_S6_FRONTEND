@@ -1,0 +1,36 @@
+<router-outlet></router-outlet>
+
+<div class="overlay" [class.active]="isTokenExpired">
+  <div class="overlay-content">
+    <div class="overlay-card">
+      <h2>Votre session a expiré</h2>
+      <p>
+        Votre token d'authentification a expiré. Veuillez vous reconnecter ou
+        vous déconnecter pour continuer.
+      </p>
+
+      <div class="overlay-actions">
+        <button
+          class="btn reconnect"
+          (click)="reconnect()"
+          [ngClass]="{ disabled: isLoggingOut }"
+        >
+          <i class="fa-solid fa-right-to-bracket"></i> Se reconnecter
+        </button>
+        <button
+          class="btn logout"
+          [class.loading]="isLoggingOut"
+          (click)="logout()"
+        >
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          Se déconnecter
+          <div
+            *ngIf="isLoggingOut"
+            class="spinner-border text-light"
+            role="status"
+          ></div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

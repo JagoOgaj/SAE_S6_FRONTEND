@@ -1,0 +1,151 @@
+* {
+  font-family: "Inter", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+  filter: grayscale(80%);
+  user-select: none;
+}
+
+.errorMessages {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 100%;
+  word-wrap: break-word;
+  white-space: normal;
+  text-align: center;
+  padding: 5px;
+  overflow: hidden;
+}
+
+.button-custom {
+  background-color: white;
+  color: rgb(40, 39, 39);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button-custom:hover {
+  background-color: rgb(70, 69, 69);
+  color: white;
+}
+
+.text-color {
+  color: white;
+}
+
+.link-custom {
+  text-decoration: none;
+  color: white;
+}
+
+.link-custom:hover {
+  text-decoration: none;
+  color: rgb(152, 148, 148);
+}
+
+.background-app {
+  background-color: #212121;
+}
+
+.background-home {
+  background-color: #080808;
+}
+
+@keyframes fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+  }
+}
+
+@keyframes fade-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.9);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+  }
+}
+
+@keyframes fade-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px) scale(0.9);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0px) scale(1);
+  }
+}
+
+@keyframes fade-right {
+  0% {
+    opacity: 0;
+    transform: translateX(30px) scale(0.9);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0px) scale(1);
+  }
+}
+
+.fade-up {
+  animation: fade-up 1s;
+}
+
+.fade-down {
+  animation: fade-down 1s;
+}
+
+.fade-left {
+  animation: fade-left 1s;
+}
+
+.fade-right {
+  animation: fade-right 1s;
+}
+
+@keyframes blur-in {
+  0% {
+    filter: blur(10px);
+    opacity: 0;
+  }
+  100% {
+    filter: blur(0px);
+    opacity: 1;
+  }
+}
+
+.blur-in {
+  animation: blur-in 0.5s ease-in-out;
+}

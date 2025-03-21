@@ -1,0 +1,443 @@
+<div id="fullPage">
+  <div class="header" [class]="sizeClass">
+    <div class="header-icons d-flex justify-content-between w-100">
+      <div class="d-flex align-items-center">
+        <i
+          class="bi bi-window-sidebar icon fade-down"
+          [ngClass]="{
+            'visible-icons': isAuth && isCollapsed,
+            'hidden-icons': !isAuth || !isCollapsed,
+            disabled: isLoggingOut,
+          }"
+          (click)="toggleOrCloseCollapse()"
+        >
+          <span class="tooltip-text">Fermer ou ouvrir</span>
+        </i>
+        <i
+          class="fa-regular fa-pen-to-square icon fade-down"
+          [ngClass]="{
+            'visible-icons': !isAuth && isCollapsed,
+            'hidden-icons': isAuth,
+            disabled: isLoggingOut || isProcessing,
+          }"
+          (click)="newConversation()"
+        >
+          <span class="tooltip-text">Nouvelle conversation</span>
+        </i>
+        
+          <span class="no-background fade-down">DeepIA</span>
+        
+      </div>
+      <div class="d-flex align-items-center">
+        <i
+          class="fa-solid fa-house houseIcon fade-down"
+          (click)="redirectTo('')"
+        ></i>
+        @if (!isAuth) {
+          <div class="registrer-connexion-container fade-down">
+            <button class="no-background" (click)="redirectTo('auth')">
+              <p class="r-c-text">Inscription / Connexion</p>
+              <span class="tooltip-text-left"
+                >Connectez vous ou inscrivez vous</span
+              >
+            </button>
+          </div>
+        } @else {
+          <div class="dropdown fade-down">
+            <button
+              class="btn btn-dark no-background"
+              type="button"
+              id="dropdownMenuButtonLogout"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i style="font-size: 24px" class="bi bi-person-circle"></i>
+              <span class="tooltip-text-left">Options utilisateur</span>
+            </button>
+            <ul
+              class="dropdown-menu custom-dropdown-menu dropdown-menu-end dropdown-menu-lg-start"
+              aria-labelledby="dropdownMenuButtonLogout"
+            >
+              <li>
+                <button
+                  class="dropdown-item"
+                  (click)="logout()"
+                  [ngClass]="{ disabled: isLoggingOut }"
+                >
+                  <div class="d-flex align-items-center">
+                    <i
+                      *ngIf="!isLoggingOut"
+                      class="fa-solid fa-sign-out-alt"
+                    ></i>
+                    <div
+                      class="spinner-border spinner-border-sm text-light"
+                      *ngIf="isLoggingOut"
+                      role="status"
+                    >
+                      <span class="visually-hidden">Déconnexion...</span>
+                    </div>
+                    <div class="ms-3">
+                      <h3 class="dropdown-item-title">Déconnexion</h3>
+                    </div>
+                  </div>
+                </button>
+              </li>
+            </ul>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="body" [class]="sizeClass">
+    @if (isLoading) {
+      <div class="loading-spinner">
+        <div class="spinner-border text-light" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+      </div>
+    } @else if (conversationData) {
+      <div class="conversation-container blur-in">
+        <div
+          class="conversation-content"
+          [ngClass]="{ disabled: isLoggingOut }"
+          #conversationContainer
+          (scroll)="onScroll()"
+        >
+        <div *ngFor="let message of conversationData">
+          <!-- Message de l'utilisateur -->
+          <div *ngIf="message.type === 'user'" class="message user-message">
+            <div class="user-image">
+              <!-- Affichage du texte -->
+              <span style="color: #fff; font-size: 18px; font-style: bold;">{{ message.content }}</span>
+        
+              <!-- Affichage des noms des fichiers -->
+              <div *ngIf="message.documents?.length > 0" class="file-sources">
+                <span> Source : </span>
+                <span *ngFor="let doc of message.documents" class="file-source">
+                  {{ doc }}
+                </span>
+              </div>
+            </div>
+          </div>
+        
+          <!-- Message de l'IA -->
+          <div *ngIf="message.type === 'ia'" class="message model-message">
+            <div class="model-image">
+              <img src="logo(2).png" alt="Model Image" />
+            </div>
+            <div class="response">
+              <p
+                style="margin-top: 15px"
+                [ngClass]="{ glow: message.content === 'Analyse...' }"
+              >
+                {{ message.content }}
+              </p>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+      <div
+        class="button-container"
+        [ngClass]="{ disabled: isLoggingOut || isProcessing }"
+      >
+        <button
+          *ngIf="showScrollToBottomButton || !showScrollToBottomButton"
+          [ngClass]="{
+            'slide-down': !showScrollToBottomButton,
+          }"
+          class="scroll-to-bottom-button"
+          (click)="scrollToBottom()"
+        >
+          <i class="fa-solid fa-arrow-down"></i>
+        </button>
+        @if (selectedModel !== Model.WEBCAM_REAL_TIME_VISION) {
+          <div
+            class="input-bar-submit blur-in"
+          >
+          <div class="file-previews" *ngIf="selectedFiles.length > 0">
+            <div
+              class="file-preview"
+              *ngFor="let file of selectedFiles; let i = index"
+              [style.width.%]="25"
+            >
+              <div class="file-preview-content">
+                <i class="fa-solid fa-file" style="font-size: 24px; color: white;"></i>
+                <div class="file-info">
+                  <p class="file-name">{{ file.file?.name }}</p>
+                  <p class="file-extension">{{ getFileExtension(file.file?.name) }}</p>
+                </div>
+                <button class="remove-file" (click)="removeDocument(i)">
+                  <i class="fa-solid fa-times" style="color: white;"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <textarea
+          [(ngModel)]="userInput"
+          class="textarea-input-bar"
+          placeholder="Message à DeepIA"
+          (input)="adjustHeight($event)"
+        ></textarea>
+            
+
+            <div class="button-bottom-submit">
+              <div class="capture-icons-button">
+            
+
+                <div class="tooltip-container">
+                  <label for="fileInput" [ngClass]="{ disabled: selectedFiles.length >= 5 }">
+                    <i
+                      class="bi bi-paperclip no-background-icons-capture"
+                      [ngClass]="{ disabled: selectedFiles.length >= 5 }"
+                    ></i>
+                  </label>
+                  <input
+                    id="fileInput"
+                    type="file"
+                    class="file-input"
+                    (change)="onFileChange($event)"
+                    accept=".pdf, .txt, .docx, .doc, .rtf, .odt"
+                    [disabled]="selectedFiles.length >= 5"
+                  />
+                  <span class="tooltip-text-bottom-custom">
+                    {{ selectedFiles.length >= 5 ? 'Vous avez atteint la limite de document' : 'Joindre un document' }}
+                  </span>
+                </div>
+
+                <button
+                  class="send-button-submit"
+                  (click)="submitForPrediction()"
+                  [ngClass]="{ disabled: false }"
+                >
+                  @if (!isProcessing) {
+                    <i class="fa-solid fa-arrow-up fa-lg"></i>
+                  } @else {
+                    <i
+                      class="fa-solid fa-square"
+                      style="font-size: 18px !important"
+                    ></i>
+                  }
+                </button>
+              </div>
+            </div>
+          </div>
+        } @else {
+          <div class="tooltip-container">
+            <div *ngIf="showRealTimeToolTip" class="tooltip-realTime">
+              <button class="close-webcam" (click)="stopWebcamRealTime()">
+                <i class="fa-solid fa-times"></i>
+              </button>
+
+              <video #webcamVideoRealTime autoplay></video>
+              <canvas #overlayCanvas class="canvas-overlay"></canvas>
+
+              <div class="prediction-text">{{ predictionText }}</div>
+            </div>
+
+            <button
+              class="real-time-button"
+              [ngClass]="{ disabled: showRealTimeToolTip }"
+              (click)="toggleRealTime()"
+            >
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+        }
+      </div>
+    } @else {
+      <div
+        class="blur-in"
+        [ngClass]="{
+          'centered-content': selectedModel !== Model.WEBCAM_REAL_TIME_VISION,
+          'conversation-container':
+            selectedModel == Model.WEBCAM_REAL_TIME_VISION,
+        }"
+      >
+        @if (selectedModel !== Model.WEBCAM_REAL_TIME_VISION) {
+          <h1 class="page-title">
+            <img class="image-title blur-in" src="logo(2).png" />
+          </h1>
+        } @else {
+          <div class="content-real-time blur-in">
+            <h1 class="title">Détection en Temps Réel</h1>
+            <div class="square-text">
+              <p>
+                Grâce à une technologie de vision avancée, notre modèle analyse
+                votre visage en temps réel afin de prédire avec précision votre
+                genre et votre catégorie d'âge. Entraîné sur la base de données
+                UTKFace, notre système exploite la puissance de YOLO 11 pour une
+                détection ultra-rapide et intègre EfficientNetV2M pour une
+                classification fine de l'âge. Ce modèle a été spécialement
+                affiné (fine-tuning) pour catégoriser les individus en quatre
+                groupes d'âge distincts, "Enfant" (0 à 12 ans), "Ado" (13 à 18
+                ans), "Jeune" (19 à 39 ans) et "Vieux" (40 ans et plus). Cette
+                architecture de pointe garantit des résultats fiables tout en
+                assurant une faible latence. Pour une meilleure précision,
+                veillez à poser votre ordinateur ou votre mobile sur une surface
+                stable, sans mouvement, et à être suffisamment proche de la
+                webcam. Activez votre webcam et laissez l’intelligence
+                artificielle faire son travail, sans aucun stockage de données
+                personnelles. Profitez d’une expérience fluide, rapide et
+                sécurisée, avec un modèle conçu dans le respect de votre vie
+                privée et des meilleures pratiques en vision par ordinateur.
+              </p>
+            </div>
+            <img class="logo" src="logo(2).png" alt="Logo de l'application" />
+          </div>
+        }
+
+        <div
+          class="button-container"
+          [ngClass]="{
+            disabled: isLoggingOut,
+          }"
+        >
+          @if (selectedModel !== Model.WEBCAM_REAL_TIME_VISION) {
+            <div
+              class="input-bar-submit fade-up"
+            >
+            <div class="file-previews" *ngIf="selectedFiles.length > 0">
+              <div
+                class="file-preview"
+                *ngFor="let file of selectedFiles; let i = index"
+                [style.width.%]="25"
+              >
+                <div class="file-preview-content">
+                  <i class="fa-solid fa-file" style="font-size: 24px; color: white; position: absolute;"></i>
+                  <div class="file-info">  
+                  <p class="file-name">{{ file.file?.name }}</p>
+                  <p class="file-extension">{{ getFileExtension(file.file?.name) }}</p>                    
+                  </div>
+                  <button class="remove-file" (click)="removeDocument(i)">
+                    <i class="fa-solid fa-times" style="color: white;"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+        
+
+              <textarea
+              [(ngModel)]="userInput"
+              class="textarea-input-bar"
+              placeholder="Message à DeepIA"
+              (input)="adjustHeight($event)"
+            ></textarea>
+
+              <div class="button-bottom-submit">
+                <div class="capture-icons-button">
+               
+                  <div class="tooltip-container">
+                    <label for="fileInput" [ngClass]="{ disabled: selectedFiles.length >= 5 }">
+                      <i
+                        class="bi bi-paperclip no-background-icons-capture"
+                        [ngClass]="{ disabled: selectedFiles.length >= 5 }"
+                      ></i>
+                    </label>
+                    <input
+                      id="fileInput"
+                      type="file"
+                      class="file-input"
+                      (change)="onFileChange($event)"
+                      accept=".pdf, .txt, .docx, .doc, .rtf, .odt"
+                      [disabled]="selectedFiles.length >= 5"
+                    />
+                    <span class="tooltip-text-bottom-custom">
+                      {{ selectedFiles.length >= 5 ? 'Vous avez atteint la limite de document' : 'Joindre un document' }}
+                    </span>
+                  </div>
+
+                  <button
+                    class="send-button-submit"
+                    (click)="submitForPrediction()"
+                    [ngClass]="{ disabled: false }"
+                  >
+                    @if (!isProcessing) {
+                      <i class="fa-solid fa-arrow-up fa-lg"></i>
+                    } @else {
+                      <i
+                        class="fa-solid fa-square"
+                        style="font-size: 20px !important"
+                      ></i>
+                    }
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+      @if (selectedModel == Model.WEBCAM_REAL_TIME_VISION) {
+        <div class="tooltip-container">
+          <div *ngIf="showRealTimeToolTip" class="tooltip-realTime">
+            <button class="close-webcam" (click)="stopWebcamRealTime()">
+              <i
+                class="fa-solid fa-times"
+                style="box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5)"
+              ></i>
+            </button>
+
+            <video #webcamVideoRealTime autoplay></video>
+            <canvas #overlayCanvas class="canvas-overlay"></canvas>
+
+            <div
+              class="prediction-text"
+              style="box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5)"
+            >
+              {{ predictionText }}
+            </div>
+          </div>
+
+          <button
+            class="real-time-button"
+            [ngClass]="{ disabled: showRealTimeToolTip }"
+            (click)="toggleRealTime()"
+          >
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+      }
+    }
+  </div>
+  <div
+    class="footer"
+    [ngStyle]="{
+      left:
+        isCollapsed || !isAuth
+          ? 'calc(100% - 65.563rem)'
+          : 'calc(100% - 55.563rem)',
+    }"
+  >
+    <div class="footer-content">
+      <p class="footer-text">
+        @if (conversationData) {
+          <span class="footer-text">
+            DeepIA peut faire des erreurs. Envisagez de vérifier les
+            informations importantes avant de prendre des décisions basées sur
+            les résultats fournis.
+          </span>
+        } @else {
+          <span
+            >En envoyant des images à DeepIA, vous acceptez nos
+            <a
+              [ngClass]="{ disabled: isLoggingOut }"
+              (click)="redirectTo('politique-confidentialite')"
+              class="footer-link"
+              style="cursor: pointer"
+              >Conditions d'utilisation</a
+            >. Pour en savoir plus, consultez notre page
+            <a
+              (click)="redirectTo('apropos')"
+              class="footer-link"
+              style="cursor: pointer"
+              >À propos de nous</a
+            >.</span
+          >
+        }
+      </p>
+    </div>
+  </div>
+</div>

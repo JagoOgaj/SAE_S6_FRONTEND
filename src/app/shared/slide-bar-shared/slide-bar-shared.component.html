@@ -1,0 +1,133 @@
+<div class="sidenav" [ngClass]="isCollapsed ? 'sidenav-collapsed' : ''">
+  <div class="header-container sticky-header fade-down">
+    <div class="close-toggle" (click)="toggleOrCloseCollapse()">
+      <i class="bi bi-window-sidebar"></i>
+      <span class="tooltip-text">Fermer ou ouvrir</span>
+    </div>
+    @if (!isCollapsed) {
+      <button
+        class="new-conv"
+        (click)="newConversation()"
+        [ngClass]="{
+          disabled: isProcessing || isLoggingOut,
+        }"
+      >
+        <i class="fa-regular fa-pen-to-square"></i>
+        <span class="tooltip-text-bottom">Nouvelle conversation</span>
+      </button>
+    }
+  </div>
+  <div
+    class="sticky-search"
+    style="display: flex; justify-content: center; margin-top: 20px"
+  >
+    @if (!isCollapsed) {
+      <div class="search-container fade-down">
+        <i class="bi bi-search search-icon" aria-hidden="true"></i>
+        <input
+          type="text"
+          class="input-search"
+          placeholder="Rechercher"
+          [(ngModel)]="searchQuery"
+          (input)="filterConversations()"
+        />
+      </div>
+    }
+  </div>
+  @if (!isCollapsed) {
+    <div class="container conversation-container fade-left">
+      <div
+        *ngIf="filteredConversations.length === 0 && !isLoading"
+        class="text-center mt-5"
+      >
+        <i
+          class="fa-solid fa-comment-slash no-conv"
+          style="font-size: 3rem"
+        ></i>
+        <p class="no-conv">Pas de conversation trouver</p>
+      </div>
+
+      <div
+        *ngFor="let group of filteredConversations"
+        [ngClass]="{ disabled: isProcessing && !needRefresh }"
+      >
+        <div class="sticky-date">
+          <h3 class="text-date">{{ group.date }}</h3>
+        </div>
+        <ol class="conversation-list">
+          <li
+            class="conversation-name"
+            *ngFor="let conversation of group.conversations"
+            [ngClass]="{ 'blur-in': !searchQuery }"
+          >
+            <div
+              class="conversation-data glow"
+              [ngClass]="{
+                selected:
+                  selectedConversationId === conversation.id &&
+                  !needNewConversation,
+                glow:
+                  selectedConversationId === conversation.id &&
+                  isProcessing &&
+                  !needNewConversation,
+              }"
+            >
+              <a
+                class="conversation-link"
+                (click)="selectConversation(conversation.id)"
+              >
+                {{ conversation?.title }}
+              </a>
+              <button
+                type="button"
+                class="btn p-0 delete-bouton"
+                (click)="prepareDeleteConversation(conversation)"
+              >
+                <i class="bi bi-trash delete-conversation"></i>
+              </button>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  }
+</div>
+
+<div class="overlay" [class.active]="selectedConversationIdToDell">
+  <div class="overlay-content">
+    <div class="overlay-card">
+      <h2>Supprimer cette conversation ?</h2>
+      <p>
+        Êtes-vous sûr de vouloir supprimer<br />
+        <strong>"{{ selectedConversationTitleToDell }}"</strong> ?<br />
+        Cette action est <span style="color: #ff4c4c">définitive</span> et
+        <strong>irréversible</strong>.
+      </p>
+
+      <div class="overlay-actions">
+        <button
+          class="btn reconnect"
+          (click)="resetConversationToDell()"
+          [ngClass]="{ disabled: isDeleting }"
+        >
+          Annuler
+        </button>
+
+        <button
+          class="btn logout"
+          [class.loading]="isDeleting"
+          (click)="deleteConversation()"
+          [ngClass]="{ disabled: isDeleting }"
+        >
+          <i class="bi bi-trash"></i>
+          Supprimer
+          <div
+            *ngIf="isDeleting"
+            class="spinner-border text-light"
+            role="status"
+          ></div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,216 @@
+<body class="background-home">
+  <div class="navbar-container" [class.visible]="navbarVisible">
+    <div
+      class="custom-navbar"
+      [ngStyle]="{ width: togglehamburgerIcon ? '70%' : '50%' }"
+    >
+      <div class="navbar-item left-item">
+        <a
+          routerLink=""
+          style="text-decoration: none; color: #333"
+          [ngStyle]="{
+            'pointer-events': togglehamburgerIcon ? 'none' : 'auto',
+          }"
+        >
+          @if (togglehamburgerIcon) {
+            <img style="width: 35px; height: 35px" src="logo(1).png" />
+          } @else {
+            <span>DeepIA</span>
+          }
+        </a>
+      </div>
+      <div class="navbar-item center-item">
+        <div
+          class="hamburger-icon"
+          [class.open]="togglehamburgerIcon"
+          (click)="showOrHideOverlay()"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      <div class="navbar-item right-item">
+        <i class="bi bi-stars icon" (click)="navigateTo('prompt')"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-5 blur-in">
+    <div class="about-header text-center">
+      <p class="about-date">06 mars, 2025</p>
+      <h1 class="about-title hero-title">À propos de DeepIA</h1>
+    </div>
+
+    <div class="about-content">
+      <p>
+        Bienvenue sur la page officielle de <strong>DeepIA</strong>, un projet
+        passionnant réalisé dans le cadre du BUT3 Informatique de l'Université
+        Paris Sorbonne Villetaneuse. Ce projet a pour ambition de repousser les
+        limites de la reconnaissance d'images en combinant intelligence
+        artificielle et interface utilisateur intuitive.<br
+          style="margin-bottom: 20px"
+        />
+        Nous nous concentrons sur la reconnaissance des genres et l'estimation
+        de l'âge à partir d'images de visages, en exploitant la puissance du
+        Deep Learning.
+      </p>
+
+      <p>
+        Cette initiative rassemble une équipe dynamique et passionnée composée
+        de quatre étudiants : Scander, Samy, Soheib et Nassim. Ensemble, nous
+        avons relevé le défi de concevoir une solution complète, de la recherche
+        scientifique à la mise en œuvre technique, tout en assurant une
+        expérience utilisateur fluide et engageante.
+      </p>
+
+      <h2>Les objectifs du projet</h2>
+      <p>
+        L'objectif principal de DeepIA est de développer une application
+        performante capable d'analyser des images pour extraire des informations
+        pertinentes, notamment le genre et l'âge. Cette analyse repose sur un
+        modèle multitâche innovant qui combine des techniques de classification
+        et de régression. <br style="margin-bottom: 20px" />En utilisant des
+        modèles pré-entraînés et en ajustant leur architecture, nous
+        garantissons des résultats précis tout en optimisant les performances.
+        Notre vision est d'intégrer ces technologies dans un cadre accessible
+        via une interface moderne et ergonomique.
+      </p>
+
+      <p>
+        Nous avons également visé l'intégration transparente des différentes
+        couches technologiques : un frontend interactif développé avec Angular,
+        un backend puissant en Python, et des modèles d'apprentissage basés sur
+        TensorFlow et Keras.
+      </p>
+
+      <h2>Technologies et outils</h2>
+      <p>
+        Pour atteindre nos objectifs ambitieux, nous avons sélectionné des
+        outils modernes et éprouvés :
+      </p>
+      <p>
+        - Python, accompagné des bibliothèques TensorFlow et Keras, constitue le
+        cœur de notre système d'entraînement de modèles CNN.<br
+          style="margin-bottom: 20px"
+        />
+        - Streamlit est utilisé pour proposer une interface interactive qui
+        permet aux utilisateurs de tester nos modèles en temps réel.<br
+          style="margin-bottom: 20px"
+        />
+        - Angular est la technologie choisie pour développer une interface web
+        dynamique et réactive.<br style="margin-bottom: 20px" />
+        - Flask permet de gérer les interactions entre le frontend et les
+        modèles d'apprentissage.
+      </p>
+
+      <p>
+        Le projet repose également sur le <strong>UTKFace Dataset</strong>, une
+        base de données riche en images de visages, utilisée pour entraîner nos
+        algorithmes. Nous avons soigneusement prétraité ces données pour
+        garantir leur pertinence et leur fiabilité.
+      </p>
+
+      <h2>Notre engagement</h2>
+      <p>
+        Chez DeepIA, nous croyons fermement au potentiel de l'intelligence
+        artificielle pour améliorer la compréhension des données visuelles.
+        <br style="margin-bottom: 20px" />Notre engagement ne s'arrête pas à la
+        technique : nous nous efforçons de rendre nos outils accessibles à tous,
+        avec une interface simplifiée et une documentation claire. Ce projet est
+        une invitation à explorer les possibilités infinies offertes par le Deep
+        Learning dans des applications du monde réel.
+      </p>
+      <h2>Conclusion</h2>
+      <p>
+        En conclusion, <strong>DeepIA</strong> est un projet réalisé dans le
+        cadre du BUT3 Informatique de l'Université Paris Sorbonne
+        Villetaneuse.<br style="margin-bottom: 20px" />Ce projet a permis à
+        notre équipe de relever des défis techniques tout en appliquant des
+        concepts avancés en intelligence artificielle, notamment en
+        reconnaissance d'images et en apprentissage profond.
+      </p>
+
+      <p>
+        À travers ce projet, nous avons pu mettre en pratique nos connaissances,
+        de la recherche scientifique à la mise en œuvre technique, et offrir une
+        solution complète alliant front-end et back-end, le tout dans un
+        objectif de rendre l'IA accessible et utile à tous.
+      </p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-categories">
+        <div class="footer-category">
+          <h3>DeepIA</h3>
+          <ul>
+            <li>
+              <a (click)="navigateTo('politique-confidentialite')"
+                >Confidentialité</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="footer-category">
+          <h3>Fonctionnalité</h3>
+          <ul>
+            <li><a (click)="navigateTo('prompt')">Chat</a></li>
+            <li><a (click)="navigateTo('auth')">Connexion</a></li>
+          </ul>
+        </div>
+        <div class="footer-category">
+          <h3>Les réalisateurs</h3>
+          <ul>
+            <li><a href="#">Nassim</a></li>
+            <li><a href="#">Scander</a></li>
+            <li><a href="#">Soheib</a></li>
+            <li><a href="#">Samy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 DeepIA. Tous droits réservés.</p>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#"><i class="fab fa-github"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="overlay" [class.active]="overlayVisible">
+    <div class="overlay-content">
+      <div class="overlay-item">
+        <p>DeepIA</p>
+        <ul>
+          <li><a href="politique-confidentialite">Confidentialité</a></li>
+        </ul>
+      </div>
+      <div class="overlay-item" style="margin-right: 12px">
+        <p>Lancez vous</p>
+        <ul>
+          <li>
+            <a (click)="navigateTo('prompt')"
+              >Chat
+              <i
+                class="fa-solid fa-arrow-right fa-rotate-by"
+                style="--fa-rotate-angle: -45deg"
+              ></i
+            ></a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="overlay-item">
+        <p>Vous</p>
+        <ul>
+          <li><a (click)="navigateTo('auth')">Connectez-vous</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>

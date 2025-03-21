@@ -1,0 +1,337 @@
+.is-invalid {
+  border: 1px solid red !important;
+  box-shadow: none;
+}
+
+.form-control {
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+  color: white;
+}
+
+.form-control:focus {
+  box-shadow: none;
+  border-radius: 0;
+  background-color: transparent;
+  color: white;
+}
+
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
+}
+
+.full-height {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.image-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  transition: transform 0.8s ease-in-out;
+  overflow: hidden;
+}
+
+.image-container.image-left {
+  left: 0;
+  transform: translateX(0);
+}
+
+.image-container.image-right {
+  left: 0;
+  transform: translateX(100%);
+}
+
+.slide-image {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.form-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  transition: transform 0.8s ease-in-out;
+}
+
+.form-left {
+  left: 0;
+  transform: translateX(0);
+}
+
+.form-right {
+  right: 0;
+  transform: translateX(0);
+}
+
+.form-animate {
+  position: relative;
+  transition:
+    opacity 0.6s ease-in-out,
+    transform 0.6s ease-in-out;
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease-in-out forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.6s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+@keyframes fade-upTooltipPassword {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(30px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0px) scale(1);
+  }
+}
+
+.fade-upTooltipPassword {
+  animation: fade-upTooltipPassword 0.7s;
+  transform-origin: center;
+}
+
+.footer-links,
+.footer {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.input-group {
+  border-bottom: 1px solid white;
+  background-color: transparent;
+}
+
+.input-group-text {
+  cursor: pointer;
+}
+
+.fas {
+  font-size: 1rem;
+}
+
+.status-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.password-tooltip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  padding: 20px;
+  top: -180px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(13, 13, 13, 0.96);
+  text-align: center;
+  color: #000;
+  padding: 34px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #302f2f;
+  z-index: 1000;
+  width: 100%;
+}
+
+.password-tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 10px;
+  border-style: solid;
+  border-color: #0d0d0d transparent transparent transparent;
+}
+
+.password-requirements {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.password-requirements li {
+  display: flex;
+  align-items: center;
+}
+
+.password-requirements .icon {
+  margin-right: 10px;
+}
+
+.link-custom {
+  background: none;
+  border: none;
+}
+
+.text-small {
+  min-height: 20px;
+  line-height: 20px;
+  font-size: 0.9rem;
+}
+
+.house-icon {
+  color: #ececec;
+  transition:
+    background-color 0.5s ease-out,
+    transform 0.4s ease-out;
+  padding: 15px;
+  font-size: 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: none;
+  position: relative;
+}
+
+.house-icon:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.house-icon-container {
+  position: absolute;
+  left: 0;
+  display: flex;
+  align-items: center;
+}
+
+.house-icon-container .tooltip-text-upper {
+  visibility: hidden;
+  width: 140px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 25%;
+  word-wrap: break-word;
+  white-space: nowrap;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.house-icon-container .tooltip-text-upper::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+}
+
+.house-icon-container:hover .tooltip-text-upper {
+  visibility: visible;
+  opacity: 1;
+}
+
+.arrow-icon {
+  display: inline;
+}
+
+.home-icon {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .image-container {
+    display: none;
+  }
+
+  .form-container {
+    width: 100%;
+    left: 0;
+    right: 0;
+  }
+
+  .form-left,
+  .form-right {
+    transform: translateX(0);
+  }
+
+  .form-animate {
+    width: 90%;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .form-animate {
+    width: 100%;
+    padding: 0 20px;
+  }
+
+  .password-tooltip {
+    top: -200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-animate {
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  .password-tooltip {
+    top: -220px;
+  }
+
+  .arrow-icon {
+    display: none;
+  }
+
+  .home-icon {
+    display: inline;
+  }
+
+  .house-icon {
+    font-size: 20px;
+    padding: 10px;
+  }
+
+  .house-icon-container .tooltip-text-upper {
+    display: none;
+  }
+}

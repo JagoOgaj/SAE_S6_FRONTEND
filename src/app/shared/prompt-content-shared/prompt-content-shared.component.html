@@ -18,7 +18,7 @@
           [ngClass]="{
             'visible-icons': !isAuth && isCollapsed,
             'hidden-icons': isAuth,
-            disabled: isLoggingOut || isProcessing,
+            disabled: isLoggingOut,
           }"
           (click)="newConversation()"
         >
@@ -140,7 +140,7 @@
       </div>
       <div
         class="button-container"
-        [ngClass]="{ disabled: isLoggingOut || isProcessing }"
+        [ngClass]="{ disabled: isLoggingOut}"
       >
         <button
           *ngIf="showScrollToBottomButton || !showScrollToBottomButton"
@@ -206,21 +206,29 @@
                     {{ selectedFiles.length >= 5 ? 'Vous avez atteint la limite de document' : 'Joindre un document' }}
                   </span>
                 </div>
-
-                <button
+                @if (!isProcessing) {
+                  <button
                   class="send-button-submit"
                   (click)="submitForPrediction()"
-                  [ngClass]="{ disabled: false }"
                 >
-                  @if (!isProcessing) {
-                    <i class="fa-solid fa-arrow-up fa-lg"></i>
-                  } @else {
-                    <i
-                      class="fa-solid fa-square"
-                      style="font-size: 18px !important"
-                    ></i>
-                  }
+                  <i
+                    class="fa-solid fa-arrow-up fa-lg"
+                    style="font-size: 20px !important"
+                  ></i>
                 </button>
+                }
+                @else {
+                  <button
+                  class="send-button-submit"
+                  (click)="cancelPrediction()"
+                >
+                  <i
+                    class="fa-solid fa-square"
+                    style="font-size: 20px !important"
+                  ></i>
+                </button>
+                }
+                
               </div>
             </div>
           </div>
@@ -350,20 +358,28 @@
                     </span>
                   </div>
 
-                  <button
+                  @if (!isProcessing) {
+                    <button
                     class="send-button-submit"
                     (click)="submitForPrediction()"
-                    [ngClass]="{ disabled: false }"
                   >
-                    @if (!isProcessing) {
-                      <i class="fa-solid fa-arrow-up fa-lg"></i>
-                    } @else {
-                      <i
-                        class="fa-solid fa-square"
-                        style="font-size: 20px !important"
-                      ></i>
-                    }
+                    <i
+                      class="fa-solid fa-arrow-up fa-lg"
+                      style="font-size: 20px !important"
+                    ></i>
                   </button>
+                  }
+                  @else {
+                    <button
+                    class="send-button-submit"
+                    (click)="cancelPrediction()"
+                  >
+                    <i
+                      class="fa-solid fa-square"
+                      style="font-size: 20px !important"
+                    ></i>
+                  </button>
+                  }
                 </div>
               </div>
             </div>

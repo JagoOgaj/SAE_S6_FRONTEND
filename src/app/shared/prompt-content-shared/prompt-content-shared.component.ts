@@ -23,6 +23,8 @@ import { PromptService } from '../../pages/prompt/prompt.service';
 import { PromptContentSharedService } from './prompt-content-shared.service';
 import { webSocketUrl } from '../../constants/web-sockets/ws.constants';
 import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 interface CapturedImage {
   file: File | null;
@@ -82,6 +84,7 @@ export class PromptContentSharedComponent
   websocket: WebSocket | null = null;
   predictionText: string = 'Analyse en cours...';
   userInput: string = '';
+  cancelRequest$ = new Subject<void>(); // Utilisé pour annuler les requêtes HTTP
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -336,76 +339,93 @@ export class PromptContentSharedComponent
   }
 
   submitForPrediction() {
+    if (!this.conversationData) {
+      console.error('conversationData est null. Initialisation nécessaire.');
+      this.conversationData = []; // Réinitialise conversationData si elle est null
+    }
+  
     if (this.selectedFiles.length > 0 || this.userInput.trim() !== '') {
       this.isProcessing = true;
-      this.sharedPrompService.setIsProcessing(true);
   
-      if (this.conversationData == null) {
-        this.conversationData = [];
-      }
-  
-      // Ajout du message utilisateur avec texte et documents
+      // Ajout du message utilisateur
       const userMessage = {
         type: 'user',
-        content: this.userInput.trim(), // Texte de l'utilisateur
-        documents: this.selectedFiles.map((file) => file.file?.name), // Liste des noms des fichiers
+        content: this.userInput.trim(),
+        documents: this.selectedFiles.map((file) => file.file?.name),
         created_at: this.getCurrentParisTime(),
       };
       this.conversationData.push(userMessage);
   
-      if (this.conversationSelected != null) {
-        this.conversationDataToUpdate.messages.push({ ...userMessage });
-      }
-  
-      this.scrollToBottom();
+      // Réinitialiser l'input utilisateur
+      this.userInput = '';
   
       // Ajout d'un message de chargement pour l'IA
       const loadingMessage = {
         type: 'ia',
         content: 'Analyse...',
-        documents: null,
         created_at: this.getCurrentParisTime(),
       };
       this.conversationData.push(loadingMessage);
-      this.scrollToBottom();
   
       // Préparation des données pour le backend
       const formData = new FormData();
-      formData.append('userInput', this.userInput.trim()); // Texte de l'utilisateur
+      formData.append('userInput', userMessage.content);
       this.selectedFiles.forEach((file, index) => {
         if (file.file) {
-          formData.append(`documents[${index}]`, file.file, file.file.name); // Ajout des fichiers
+          formData.append(`documents[${index}]`, file.file, file.file.name);
         }
       });
   
-      // Envoi des données au backend
+      // Envoi des données au backend avec annulation
       this.prompService
         .getPrediction(this.selectedModel, formData)
+        .pipe(takeUntil(this.cancelRequest$)) // Annule la requête si cancelRequest$ émet
         .subscribe({
           next: (response) => {
             const modelMessage = {
               type: 'ia',
-              content: response.message, // Réponse de l'IA
-              documents: null,
+              content: response.message,
               created_at: this.getCurrentParisTime(),
             };
             this.conversationData[this.conversationData.length - 1] = modelMessage;
-  
-            this.scrollToBottom();
+            this.isProcessing = false;
           },
           error: (error) => {
             console.error('Erreur API:', error);
             this.conversationData[this.conversationData.length - 1].content =
               "Erreur lors de l'analyse.";
-            this.scrollToBottom();
-            this.sharedPrompService.setIsProcessing(false);
+            this.isProcessing = false;
           },
         });
   
-      this.removeAllImage(); // Supprime tous les fichiers après soumission
+      this.removeAllImage(); // Supprime les fichiers après soumission
     } else {
       console.error('Aucun fichier ou input utilisateur fourni.');
     }
+  }
+  
+
+  cancelPrediction(): void {
+    this.isProcessing = false;
+
+    // Annule la requête HTTP en cours
+    this.cancelRequest$.next(); // Émet un signal d'annulation
+    this.cancelRequest$.complete(); // Termine le Subject
+
+    // Supprime le message de chargement
+    if (this.conversationData && this.conversationData.length > 0) {
+      this.conversationData.pop();
+    }
+
+    // Ajoute un message indiquant que la requête a été interrompue
+    const interruptionMessage = {
+      type: 'ia',
+      content: 'Vous avez interrompu la requête.',
+      created_at: this.getCurrentParisTime(),
+    };
+    this.conversationData.push(interruptionMessage);
+
+    console.log('Requête annulée par l\'utilisateur.');
   }
 
   displayTextProgressively(text: string, messageIndex: number) {

@@ -1120,7 +1120,7 @@
 .response {
   flex: 1;
   text-align: left;
-  max-width: 40%;
+  max-width: 100%;
   padding: 15px;
   border-radius: 20px 20px 20px 0;
   font-size: 1.1rem;

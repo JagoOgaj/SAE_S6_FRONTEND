@@ -24,8 +24,53 @@
         >
           <span class="tooltip-text">Nouvelle conversation</span>
         </i>
-        
+
+        @if (!isAuth){
           <span class="no-background fade-down">DeepIA</span>
+        }
+        @else {
+          <div class="dropdown fade-down">
+            <button
+              class="btn btn-dark no-background"
+              type="button"
+              id="dropdownMenuButtonLogout"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i style="font-size: 24px" class="bi bi-option"></i>
+              <span class="tooltip-text-right">nouveaux documents</span>
+            </button>
+            <ul
+              class="dropdown-menu custom-dropdown-menu dropdown-menu-end dropdown-menu-lg-start"
+              aria-labelledby="dropdownMenuButtonLogout"
+            >
+              <li>
+                <button
+                  class="dropdown-item"
+                  (click)="populateDb()"
+                  [ngClass]="{ disabled: isLoggingOut }"
+                >
+                  <div class="d-flex align-items-center">
+                    <i
+                      *ngIf="!isLoggingOut"
+                      class="bi bi-database-add"
+                    ></i>
+                    <div
+                      class="spinner-border spinner-border-sm text-light"
+                      *ngIf="isLoggingOut"
+                      role="status"
+                    >
+                      <span class="visually-hidden">Déconnexion...</span>
+                    </div>
+                    <div class="ms-3">
+                      <h3 class="dropdown-item-title">Insérer des nouveaux documents</h3>
+                    </div>
+                  </div>
+                </button>
+              </li>
+            </ul>
+          </div>
+        }
         
       </div>
       <div class="d-flex align-items-center">
@@ -105,13 +150,13 @@
           (scroll)="onScroll()"
         >
         <div *ngFor="let message of conversationData">
-          <!-- Message de l'utilisateur -->
+          
           <div *ngIf="message.type === 'user'" class="message user-message">
             <div class="user-image">
-              <!-- Affichage du texte -->
+          
               <span style="color: #fff; font-size: 18px; font-style: bold;">{{ message.content }}</span>
         
-              <!-- Affichage des noms des fichiers -->
+            
               <div *ngIf="message.documents?.length > 0" class="file-sources">
                 <span> Source : </span>
                 <span *ngFor="let doc of message.documents" class="file-source">
@@ -121,7 +166,7 @@
             </div>
           </div>
         
-          <!-- Message de l'IA -->
+          
           <div *ngIf="message.type === 'ia'" class="message model-message">
             <div class="model-image">
               <img src="logo(2).png" alt="Model Image" />
@@ -454,6 +499,83 @@
           >
         }
       </p>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="overlay" [class.active]="needToPopulateDB">
+  <div class="overlay-content">
+    <div class="overlay-card">
+      <h2>Insérer des documents</h2>
+
+      <div class="file-previews" *ngIf="selectedFiles.length > 0">
+        <div
+          class="file-preview"
+          *ngFor="let file of selectedFiles; let i = index"
+          [style.width.%]="25"
+        >
+          <div class="file-preview-content">
+            <i class="fa-solid fa-file" style="font-size: 24px; color: white;"></i>
+            <div class="file-info">
+              <p class="file-name">{{ file.file?.name }}</p>
+              <p class="file-extension">{{ getFileExtension(file.file?.name) }}</p>
+            </div>
+            <button class="remove-file" (click)="removeDocument(i)">
+              <i class="fa-solid fa-times" style="color: white;"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tooltip-container">
+        <label for="fileInput" [ngClass]="{ disabled: selectedFiles.length >= 5 }">
+          <i
+            class="bi bi-file-earmark-plus no-background-icons-capture"
+            [ngClass]="{ disabled: selectedFiles.length >= 5 }"
+          ></i>
+        </label>
+        <input
+          id="fileInput"
+          type="file"
+          class="file-input"
+          (change)="onFileChange($event)"
+          accept=".pdf, .txt, .docx, .doc, .rtf, .odt"
+          [disabled]="selectedFiles.length >= 5"
+        />
+        <span class="tooltip-text-bottom-custom">
+          {{ selectedFiles.length >= 5 ? 'Vous avez atteint la limite de document' : 'Joindre un document' }}
+        </span>
+      </div>
+
+     
+      
+
+      <div class="overlay-actions">
+        <button
+          class="btn reconnect"
+          (click)="populateDb()"
+          [ngClass]="{ disabled: isDeleting }"
+        >
+          Annuler
+        </button>
+
+        <button
+          class="btn add"
+          [class.loading]="isDelay"
+          (click)="populateDb(true)"
+          [ngClass]="{ disabled: isDeleting || this.selectedFiles.length == 0}"
+        >
+          <i class="bi bi-trash"></i>
+          Ajouter
+          <div
+            *ngIf="isDeleting"
+            class="spinner-border text-light"
+            role="status"
+          ></div>
+        </button>
+      </div>
     </div>
   </div>
 </div>

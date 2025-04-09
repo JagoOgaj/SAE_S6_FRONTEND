@@ -86,6 +86,9 @@ export class PromptContentSharedComponent
   userInput: string = '';
   cancelRequest$ = new Subject<void>(); 
   initialConversationCount: number = 0;
+  needToPopulateDB: boolean = false;
+  isDelay : boolean = false;
+  isDeleting: boolean = false;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -488,6 +491,25 @@ export class PromptContentSharedComponent
         }
       }
     }, 5);
+  }
+
+  populateDb(add: boolean = false): void {
+    if (add) {
+      this.isDelay = true;
+      this.isDeleting = true;
+      setTimeout(() => {
+        this.isDelay = false;
+        this.isDeleting = false;
+        this.needToPopulateDB = false;
+        this. selectedFiles= [];
+      }, 2000);
+    } else {
+      this.needToPopulateDB = !this.needToPopulateDB;
+      this. selectedFiles= [];
+    }
+    
+   
+
   }
 
   scrollToBottom(): void {

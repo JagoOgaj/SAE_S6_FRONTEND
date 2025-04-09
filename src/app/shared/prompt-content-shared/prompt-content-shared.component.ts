@@ -84,7 +84,8 @@ export class PromptContentSharedComponent
   websocket: WebSocket | null = null;
   predictionText: string = 'Analyse en cours...';
   userInput: string = '';
-  cancelRequest$ = new Subject<void>(); // Utilisé pour annuler les requêtes HTTP
+  cancelRequest$ = new Subject<void>(); 
+  initialConversationCount: number = 0;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -286,7 +287,7 @@ export class PromptContentSharedComponent
 
   
   onFileChange(event: any): void {
-    const files = Array.from(event.target.files) as File[]; // Cast explicite en tableau de File
+    const files = Array.from(event.target.files) as File[]; 
     const validExtensions = ['pdf', 'txt', 'docx', 'doc', 'rtf', 'odt'];
   
     files.forEach((file) => {
@@ -297,19 +298,18 @@ export class PromptContentSharedComponent
         return;
       }
   
-      // Ajoute le fichier au tableau selectedFiles
       this.selectedFiles.push({
         file: file,
-        previewUrl: '', // Pas d'aperçu nécessaire pour ces types de fichiers
+        previewUrl: '',
       });
     });
   
-    this.showInputBar = this.selectedFiles.length > 0; // Affiche la barre si des fichiers sont sélectionnés
+    this.showInputBar = this.selectedFiles.length > 0;
   }
 
   removeDocument(index: number): void {
-    this.selectedFiles.splice(index, 1); // Supprime le fichier à l'index donné
-    this.showInputBar = this.selectedFiles.length > 0 || this.userInput.trim() !== ''; // Cache la barre si aucun fichier ou input utilisateur
+    this.selectedFiles.splice(index, 1);
+    this.showInputBar = this.selectedFiles.length > 0 || this.userInput.trim() !== ''; 
   }
 
   removeAllImage(): void {
@@ -329,6 +329,7 @@ export class PromptContentSharedComponent
           created_at: message.created_at,
         }));
         this.isLoading = false;
+        this.initialConversationCount = this.conversationData.length;
         this.scrollToBottom();
       },
       error: (errors) => {
@@ -341,13 +342,13 @@ export class PromptContentSharedComponent
   submitForPrediction() {
     if (!this.conversationData) {
       console.error('conversationData est null. Initialisation nécessaire.');
-      this.conversationData = []; // Réinitialise conversationData si elle est null
+      this.conversationData = [];
     }
   
     if (this.selectedFiles.length > 0 || this.userInput.trim() !== '') {
       this.isProcessing = true;
   
-      // Ajout du message utilisateur
+  
       const userMessage = {
         type: 'user',
         content: this.userInput.trim(),
@@ -356,10 +357,9 @@ export class PromptContentSharedComponent
       };
       this.conversationData.push(userMessage);
   
-      // Réinitialiser l'input utilisateur
+
       this.userInput = '';
   
-      // Ajout d'un message de chargement pour l'IA
       const loadingMessage = {
         type: 'ia',
         content: 'Analyse...',
@@ -367,7 +367,7 @@ export class PromptContentSharedComponent
       };
       this.conversationData.push(loadingMessage);
   
-      // Préparation des données pour le backend
+
       const formData = new FormData();
       formData.append('userInput', userMessage.content);
       this.selectedFiles.forEach((file, index) => {
@@ -376,10 +376,9 @@ export class PromptContentSharedComponent
         }
       });
   
-      // Envoi des données au backend avec annulation
       this.prompService
         .getPrediction(this.selectedModel, formData)
-        .pipe(takeUntil(this.cancelRequest$)) // Annule la requête si cancelRequest$ émet
+        .pipe(takeUntil(this.cancelRequest$))
         .subscribe({
           next: (response) => {
             const modelMessage = {
@@ -387,7 +386,11 @@ export class PromptContentSharedComponent
               content: response.message,
               created_at: this.getCurrentParisTime(),
             };
-            this.conversationData[this.conversationData.length - 1] = modelMessage;
+            this.conversationData[this.conversationData.length - 1].content = '';
+            this.displayTextProgressively(
+              response.message,
+              this.conversationData.length - 1,
+            );
             this.isProcessing = false;
           },
           error: (error) => {
@@ -398,7 +401,7 @@ export class PromptContentSharedComponent
           },
         });
   
-      this.removeAllImage(); // Supprime les fichiers après soumission
+      this.removeAllImage();
     } else {
       console.error('Aucun fichier ou input utilisateur fourni.');
     }
@@ -408,16 +411,17 @@ export class PromptContentSharedComponent
   cancelPrediction(): void {
     this.isProcessing = false;
 
-    // Annule la requête HTTP en cours
-    this.cancelRequest$.next(); // Émet un signal d'annulation
-    this.cancelRequest$.complete(); // Termine le Subject
+  
+    this.cancelRequest$.next();
+    this.cancelRequest$.complete(); 
+    
 
-    // Supprime le message de chargement
+  
     if (this.conversationData && this.conversationData.length > 0) {
       this.conversationData.pop();
     }
 
-    // Ajoute un message indiquant que la requête a été interrompue
+
     const interruptionMessage = {
       type: 'ia',
       content: 'Vous avez interrompu la requête.',
@@ -438,9 +442,9 @@ export class PromptContentSharedComponent
       } else {
         clearInterval(interval);
         if (this.conversationSelected != null) {
-          this.conversationDataToUpdate.messages.push({
-            ...this.conversationData[this.conversationData.length - 1],
-          });
+          const newMessages = this.conversationData.slice(this.initialConversationCount);
+          this.conversationDataToUpdate.messages.push(...newMessages);
+          this.initialConversationCount = this.conversationData.length;
         }
         this.isProcessing = false;
         this.sharedPrompService.setIsProcessing(false);
@@ -483,7 +487,7 @@ export class PromptContentSharedComponent
             });
         }
       }
-    }, 20);
+    }, 5);
   }
 
   scrollToBottom(): void {
@@ -595,12 +599,12 @@ export class PromptContentSharedComponent
       next: (response) => {
         this.authTokenService.clearTokens();
         this.isLoggingOut = false;
-        this.redirectTo('');
+        this.redirectTo('auth');
       },
       error: (erros) => {
         this.authTokenService.clearTokens();
         this.isLoggingOut = false;
-        this.redirectTo('');
+        this.redirectTo('auth');
       },
     });
   }

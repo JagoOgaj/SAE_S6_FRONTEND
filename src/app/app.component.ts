@@ -43,13 +43,13 @@ export class AppComponent implements OnInit {
       next: (response) => {
         this.resetTokenExpiredStatus();
         this.isLoggingOut = false;
-        this.router.navigate(['']);
+        this.router.navigate(['auth']);
       },
       error: (errors) => {
         this.resetTokenExpiredStatus();
         this.authTokenService.clearTokens();
         this.isLoggingOut = false;
-        this.router.navigate(['']);
+        this.router.navigate(['auth']);
       },
     });
   }
